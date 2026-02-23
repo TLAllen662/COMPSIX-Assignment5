@@ -6,6 +6,25 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 
+// Logging middleware: method, url, timestamp, and body for POST/PUT
+app.use((req, res, next) => {
+  const ts = new Date().toISOString();
+  const method = req.method;
+  const url = req.originalUrl || req.url;
+  const entry = {
+    timestamp: ts,
+    method,
+    url,
+  };
+
+  if (method === "POST" || method === "PUT") {
+    entry.body = req.body;
+  }
+
+  console.log("[request]", JSON.stringify(entry));
+  next();
+});
+
 // Data for the server
 const menuItems = [
   {
