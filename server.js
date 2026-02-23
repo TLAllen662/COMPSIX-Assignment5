@@ -1,6 +1,10 @@
 // Import packages, initialize an express app, and define the port you will use
+const express = require("express");
 
+const app = express();
+const PORT = process.env.PORT || 3000;
 
+app.use(express.json());
 
 // Data for the server
 const menuItems = [
@@ -59,5 +63,75 @@ const menuItems = [
     available: false
   }
 ];
+// Helper to get next id
+let nextId = menuItems.reduce((max, it) => Math.max(max, it.id), 0) + 1;
 
-// Define routes and implement middleware here
+// Routes
+
+// GET /api/menu - Retrieve all menu items
+app.get("/api/menu", (req, res) => {
+  res.json(menuItems);
+});
+
+// GET /api/menu/:id - Retrieve a specific menu item
+app.get("/api/menu/:id", (req, res) => {
+  const id = Number(req.params.id);
+  const item = menuItems.find((m) => m.id === id);
+  if (!item) return res.status(404).json({ error: "Menu item not found" });
+  res.json(item);
+});
+
+// POST /api/menu - Add a new menu item
+app.post("/api/menu", (req, res) => {
+  const { name, description = "", price, category = "", ingredients = [], available = true } = req.body;
+  if (!name || typeof price !== "number") {
+    return res.status(400).json({ error: "Invalid payload: 'name' and numeric 'price' are required" });
+  }
+
+  const newItem = {
+    id: nextId++,
+    name,
+    description,
+    price,
+    category,
+    ingredients,
+    available: Boolean(available),
+  };
+  menuItems.push(newItem);
+  res.status(201).json(newItem);
+});
+
+// PUT /api/menu/:id - Update an existing menu item
+app.put("/api/menu/:id", (req, res) => {
+  const id = Number(req.params.id);
+  const itemIndex = menuItems.findIndex((m) => m.id === id);
+  if (itemIndex === -1) return res.status(404).json({ error: "Menu item not found" });
+
+  const existing = menuItems[itemIndex];
+  const { name, description, price, category, ingredients, available } = req.body;
+
+  // Only update fields that are provided
+  if (name !== undefined) existing.name = name;
+  if (description !== undefined) existing.description = description;
+  if (price !== undefined) existing.price = price;
+  if (category !== undefined) existing.category = category;
+  if (ingredients !== undefined) existing.ingredients = ingredients;
+  if (available !== undefined) existing.available = available;
+
+  res.json(existing);
+});
+
+// DELETE /api/menu/:id - Remove a menu item
+app.delete("/api/menu/:id", (req, res) => {
+  const id = Number(req.params.id);
+  const itemIndex = menuItems.findIndex((m) => m.id === id);
+  if (itemIndex === -1) return res.status(404).json({ error: "Menu item not found" });
+
+  menuItems.splice(itemIndex, 1);
+  res.status(204).send();
+});
+
+// Start server
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
