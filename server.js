@@ -1,5 +1,6 @@
 // Import packages, initialize an express app, and define the port you will use
 const express = require("express");
+const { body, validationResult } = require("express-validator");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -101,44 +102,71 @@ app.get("/api/menu/:id", (req, res) => {
 });
 
 // POST /api/menu - Add a new menu item
-app.post("/api/menu", (req, res) => {
-  const { name, description = "", price, category = "", ingredients = [], available = true } = req.body;
-  if (!name || typeof price !== "number") {
-    return res.status(400).json({ error: "Invalid payload: 'name' and numeric 'price' are required" });
-  }
+app.post("/api/menu",
+  [
+    body("name").isString().notEmpty().withMessage("name is required and must be a string"),
+    body("price").isFloat({ gt: 0 }).withMessage("price is required and must be a positive number"),
+    body("description").optional().isString().withMessage("description must be a string"),
+    body("category").optional().isString().withMessage("category must be a string"),
+    body("ingredients").optional().isArray().withMessage("ingredients must be an array"),
+    body("available").optional().isBoolean().withMessage("available must be a boolean")
+  ],
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
 
-  const newItem = {
-    id: nextId++,
-    name,
-    description,
-    price,
-    category,
-    ingredients,
-    available: Boolean(available),
-  };
-  menuItems.push(newItem);
-  res.status(201).json(newItem);
-});
+    const { name, description = "", price, category = "", ingredients = [], available = true } = req.body;
+
+    const newItem = {
+      id: nextId++,
+      name,
+      description,
+      price,
+      category,
+      ingredients,
+      available: Boolean(available),
+    };
+    menuItems.push(newItem);
+    res.status(201).json(newItem);
+  }
+);
 
 // PUT /api/menu/:id - Update an existing menu item
-app.put("/api/menu/:id", (req, res) => {
-  const id = Number(req.params.id);
-  const itemIndex = menuItems.findIndex((m) => m.id === id);
-  if (itemIndex === -1) return res.status(404).json({ error: "Menu item not found" });
+app.put("/api/menu/:id",
+  [
+    body("name").optional().isString().notEmpty().withMessage("name must be a non-empty string"),
+    body("price").optional().isFloat({ gt: 0 }).withMessage("price must be a positive number"),
+    body("description").optional().isString().withMessage("description must be a string"),
+    body("category").optional().isString().withMessage("category must be a string"),
+    body("ingredients").optional().isArray().withMessage("ingredients must be an array"),
+    body("available").optional().isBoolean().withMessage("available must be a boolean")
+  ],
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
 
-  const existing = menuItems[itemIndex];
-  const { name, description, price, category, ingredients, available } = req.body;
+    const id = Number(req.params.id);
+    const itemIndex = menuItems.findIndex((m) => m.id === id);
+    if (itemIndex === -1) return res.status(404).json({ error: "Menu item not found" });
 
-  // Only update fields that are provided
-  if (name !== undefined) existing.name = name;
-  if (description !== undefined) existing.description = description;
-  if (price !== undefined) existing.price = price;
-  if (category !== undefined) existing.category = category;
-  if (ingredients !== undefined) existing.ingredients = ingredients;
-  if (available !== undefined) existing.available = available;
+    const existing = menuItems[itemIndex];
+    const { name, description, price, category, ingredients, available } = req.body;
 
-  res.json(existing);
-});
+    // Only update fields that are provided
+    if (name !== undefined) existing.name = name;
+    if (description !== undefined) existing.description = description;
+    if (price !== undefined) existing.price = price;
+    if (category !== undefined) existing.category = category;
+    if (ingredients !== undefined) existing.ingredients = ingredients;
+    if (available !== undefined) existing.available = available;
+
+    res.json(existing);
+  }
+);
 
 // DELETE /api/menu/:id - Remove a menu item
 app.delete("/api/menu/:id", (req, res) => {
@@ -147,7 +175,7 @@ app.delete("/api/menu/:id", (req, res) => {
   if (itemIndex === -1) return res.status(404).json({ error: "Menu item not found" });
 
   menuItems.splice(itemIndex, 1);
-  res.status(204).send();
+  res.status(200).json({ message: "Menu item deleted successfully" });
 });
 
 // Start server
