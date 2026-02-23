@@ -1,0 +1,117 @@
+{
+  "info": {
+    "name": "COMPSIX Assignment5 API",
+    "_postman_id": "b3c6a6d2-0000-4000-8000-000000000000",
+    "description": "Collection to test the menu API (GET/POST/PUT/DELETE). Set variable `baseUrl` to http://localhost:3000",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "GET All Menu Items",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/menu",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "menu"
+          ]
+        }
+      }
+    },
+    {
+      "name": "GET Menu Item by ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/menu/1",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "menu",
+            "1"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Create Menu Item (POST)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Postman Item\",\n  \"description\": \"Created from Postman\",\n  \"price\": 4.99,\n  \"category\": \"test\",\n  \"ingredients\": [\"a\"],\n  \"available\": true\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/menu",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "menu"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Update Menu Item (PUT)",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"price\": 5.50,\n  \"available\": false\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/menu/{{itemId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "menu",
+            "{{itemId}}"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Delete Menu Item (DELETE)",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/menu/{{itemId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "menu",
+            "{{itemId}}"
+          ]
+        }
+      }
+    }
+  ],
+  "event": []
+}
