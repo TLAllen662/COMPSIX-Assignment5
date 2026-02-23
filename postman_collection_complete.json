@@ -1,0 +1,439 @@
+{
+  "info": {
+    "name": "Restaurant Menu API - Complete Documentation",
+    "_postman_id": "b3c6a6d2-5678-4000-8000-000000000001",
+    "description": "Comprehensive API documentation for the Restaurant Menu API. This collection includes all CRUD endpoints with descriptions, example requests/responses, and automated tests.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "itemId",
+      "value": "1",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "GET Endpoints",
+      "description": "Retrieve menu items from the API",
+      "item": [
+        {
+          "name": "Get All Menu Items",
+          "description": {
+            "content": "Retrieve all menu items from the restaurant.\n\n**Endpoint:** `GET /api/menu`\n\n**Use Case:** Display the complete menu to customers\n\n**Response:** Array of menu item objects with all details (id, name, description, price, category, ingredients, availability)",
+            "type": "text/markdown"
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/menu",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "menu"]
+            }
+          },
+          "response": [
+            {
+              "name": "Successful GET - All menu items",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/menu",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "menu"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"id\": 1,\n    \"name\": \"Classic Burger\",\n    \"description\": \"Beef patty with lettuce, tomato, and cheese on a sesame seed bun\",\n    \"price\": 12.99,\n    \"category\": \"entree\",\n    \"ingredients\": [\"beef\", \"lettuce\", \"tomato\", \"cheese\", \"bun\"],\n    \"available\": true\n  },\n  {\n    \"id\": 2,\n    \"name\": \"Chicken Caesar Salad\",\n    \"description\": \"Grilled chicken breast over romaine lettuce with parmesan and croutons\",\n    \"price\": 11.50,\n    \"category\": \"entree\",\n    \"ingredients\": [\"chicken\", \"romaine lettuce\", \"parmesan cheese\", \"croutons\", \"caesar dressing\"],\n    \"available\": true\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Get Menu Item by ID",
+          "description": {
+            "content": "Retrieve a specific menu item by its ID.\n\n**Endpoint:** `GET /api/menu/:id`\n\n**Parameters:**\n- `id` (path) - The unique identifier of the menu item\n\n**Use Case:** Display details of a single menu item\n\n**Success Response:** Object containing the menu item details\n\n**Error Cases:**\n- 404: Menu item not found (invalid ID)",
+            "type": "text/markdown"
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/menu/{{itemId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "menu", "{{itemId}}"]
+            }
+          },
+          "response": [
+            {
+              "name": "Successful GET - Menu item by ID",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/menu/1",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "menu", "1"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": 1,\n  \"name\": \"Classic Burger\",\n  \"description\": \"Beef patty with lettuce, tomato, and cheese on a sesame seed bun\",\n  \"price\": 12.99,\n  \"category\": \"entree\",\n  \"ingredients\": [\"beef\", \"lettuce\", \"tomato\", \"cheese\", \"bun\"],\n  \"available\": true\n}"
+            },
+            {
+              "name": "Error 404 - Menu item not found",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/menu/999",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "menu", "999"]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\"error\": \"Menu item not found\"}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "POST Endpoint",
+      "description": "Create new menu items",
+      "item": [
+        {
+          "name": "Create Menu Item",
+          "description": {
+            "content": "Add a new menu item to the restaurant's menu.\n\n**Endpoint:** `POST /api/menu`\n\n**Request Body:**\n```json\n{\n  \"name\": \"string (required)\",\n  \"description\": \"string (optional)\",\n  \"price\": \"number (required, must be > 0)\",\n  \"category\": \"string (optional)\",\n  \"ingredients\": \"array (optional)\",\n  \"available\": \"boolean (optional, default: true)\"\n}\n```\n\n**Validation Rules:**\n- `name` is required and must be a non-empty string\n- `price` is required and must be a positive number\n- All other fields are optional\n\n**Success Response (201):** Created menu item object with auto-generated `id`\n\n**Error Cases:**\n- 400: Validation error (missing required fields or invalid types)",
+            "type": "text/markdown"
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Grilled Salmon\",\n  \"description\": \"Fresh Atlantic salmon grilled with lemon butter sauce\",\n  \"price\": 18.99,\n  \"category\": \"entree\",\n  \"ingredients\": [\"salmon\", \"lemon\", \"butter\", \"herbs\"],\n  \"available\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/menu",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "menu"]
+            }
+          },
+          "response": [
+            {
+              "name": "Successful POST - Create menu item",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Grilled Salmon\",\n  \"description\": \"Fresh Atlantic salmon grilled with lemon butter sauce\",\n  \"price\": 18.99,\n  \"category\": \"entree\",\n  \"ingredients\": [\"salmon\", \"lemon\", \"butter\", \"herbs\"],\n  \"available\": true\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/menu",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "menu"]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": 8,\n  \"name\": \"Grilled Salmon\",\n  \"description\": \"Fresh Atlantic salmon grilled with lemon butter sauce\",\n  \"price\": 18.99,\n  \"category\": \"entree\",\n  \"ingredients\": [\"salmon\", \"lemon\", \"butter\", \"herbs\"],\n  \"available\": true\n}"
+            },
+            {
+              "name": "Error 400 - Validation error (missing name)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"price\": 12.99\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/menu",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "menu"]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"errors\": [\n    {\n      \"type\": \"field\",\n      \"msg\": \"Invalid value\",\n      \"path\": \"name\",\n      \"location\": \"body\"\n    },\n    {\n      \"type\": \"field\",\n      \"msg\": \"name is required and must be a string\",\n      \"path\": \"name\",\n      \"location\": \"body\"\n    }\n  ]\n}"
+            },
+            {
+              "name": "Error 400 - Validation error (invalid price)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json\n"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Test Item\",\n  \"price\": \"invalid\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/menu",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "menu"]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"errors\": [\n    {\n      \"type\": \"field\",\n      \"value\": \"invalid\",\n      \"msg\": \"price is required and must be a positive number\",\n      \"path\": \"price\",\n      \"location\": \"body\"\n    }\n  ]\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PUT Endpoint",
+      "description": "Update existing menu items",
+      "item": [
+        {
+          "name": "Update Menu Item",
+          "description": {
+            "content": "Update one or more fields of an existing menu item.\n\n**Endpoint:** `PUT /api/menu/:id`\n\n**Parameters:**\n- `id` (path) - The unique identifier of the menu item to update\n\n**Request Body:** (all fields optional)\n```json\n{\n  \"name\": \"string (optional)\",\n  \"description\": \"string (optional)\",\n  \"price\": \"number (optional, must be > 0)\",\n  \"category\": \"string (optional)\",\n  \"ingredients\": \"array (optional)\",\n  \"available\": \"boolean (optional)\"\n}\n```\n\n**Validation Rules:**\n- If `name` is provided, it must be a non-empty string\n- If `price` is provided, it must be a positive number\n- Only provided fields are updated (partial updates supported)\n\n**Success Response (200):** Updated menu item object\n\n**Error Cases:**\n- 400: Validation error (invalid field types or values)\n- 404: Menu item not found (invalid ID)",
+            "type": "text/markdown"
+          },
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"price\": 14.99,\n  \"available\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/menu/{{itemId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "menu", "{{itemId}}"]
+            }
+          },
+          "response": [
+            {
+              "name": "Successful PUT - Update menu item",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"price\": 14.99,\n  \"available\": false\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/menu/1",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "menu", "1"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": 1,\n  \"name\": \"Classic Burger\",\n  \"description\": \"Beef patty with lettuce, tomato, and cheese on a sesame seed bun\",\n  \"price\": 14.99,\n  \"category\": \"entree\",\n  \"ingredients\": [\"beef\", \"lettuce\", \"tomato\", \"cheese\", \"bun\"],\n  \"available\": false\n}"
+            },
+            {
+              "name": "Error 400 - Validation error (invalid price)",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"price\": \"invalid\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/menu/1",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "menu", "1"]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"errors\": [\n    {\n      \"type\": \"field\",\n      \"value\": \"invalid\",\n      \"msg\": \"price must be a positive number\",\n      \"path\": \"price\",\n      \"location\": \"body\"\n    }\n  ]\n}"
+            },
+            {
+              "name": "Error 404 - Menu item not found",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"price\": 14.99\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/menu/999",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "menu", "999"]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\"error\": \"Menu item not found\"}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "DELETE Endpoint",
+      "description": "Remove menu items",
+      "item": [
+        {
+          "name": "Delete Menu Item",
+          "description": {
+            "content": "Remove a menu item from the restaurant's menu permanently.\n\n**Endpoint:** `DELETE /api/menu/:id`\n\n**Parameters:**\n- `id` (path) - The unique identifier of the menu item to delete\n\n**Use Case:** Remove items from the menu (e.g., seasonal items, discontinued products)\n\n**Success Response (200):** Confirmation message\n\n**Error Cases:**\n- 404: Menu item not found (invalid ID)\n\n**Notes:**\n- This action is irreversible\n- Deleted items cannot be recovered",
+            "type": "text/markdown"
+          },
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/menu/{{itemId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "menu", "{{itemId}}"]
+            }
+          },
+          "response": [
+            {
+              "name": "Successful DELETE - Menu item deleted",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/menu/8",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "menu", "8"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\"message\": \"Menu item deleted successfully\"}"
+            },
+            {
+              "name": "Error 404 - Menu item not found",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/menu/999",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "menu", "999"]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\"error\": \"Menu item not found\"}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
